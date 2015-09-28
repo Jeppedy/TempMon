@@ -79,7 +79,7 @@ def initRadioReceive():
 
 def initSensors( sensorArrayIn ):
   sensorList = (  
-      ["F1", "Grill", 300, GRILL_API_KEY, GRILL_FEED_ID, "grill",
+      ["F1", "Grill", 60, GRILL_API_KEY, GRILL_FEED_ID, "grill",
         (["1", "pittemp", "PitTemp"], ["2", "food1temp", "Food1Temp"], ["3", "food2temp", "Food2Temp"]) ]
     , ["C1", "Nathan", 600, DEFAULT_API_KEY, DEFAULT_FEED_ID, "nathan",
         (["unused", "", ""], ["1", "humidity", "Humidity"], ["2", "C1_temp", "C1_Temp"]) ]
