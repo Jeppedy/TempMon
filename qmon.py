@@ -151,7 +151,7 @@ def on_message(client, userdata, msg):
         # GroveStream push for all streams for a node (component)
         try:
             url = GROVESTREAMS_URL+"&seq="+str(seq)+"&compId="+n.getComponentID()+metricsString
-            print url
+            #print url
 	    urlhandle = urllib2.urlopen(url) 
 	    urlhandle.close() 
         except( requests.exceptions.ConnectionError, requests.HTTPError, urllib2.URLError) as e:
