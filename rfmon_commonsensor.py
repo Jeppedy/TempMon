@@ -33,6 +33,9 @@ class rfmon_BASE( object ):
     def getTransmitterID(self):
         return self._transmitterID
 
+    def getTransmitterName(self):
+        return self._transmitterName
+
     def getComponentID(self):
         return self._componentID
 

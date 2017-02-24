@@ -16,21 +16,20 @@ import urllib2
 import json
 import RPi.GPIO as GPIO
 import sqlite3
-import rfmon_house as rfmon_house
+##import rfmon_house as rfmon_house
 import rfmon_commonsensor as rfbase
 
 from nrf24 import NRF24
 
-STATUSCAKE_URL="https://push.statuscake.com/?PK=50bc5a406146489&TestID=510385"
-
-PUSHMON_URL="http://ping.pushmon.com/pushmon/ping/"
-PUSHMON_ID="WmpnHI"
-PUSHINGBOX_URL="http://api.pushingbox.com/pushingbox"
-PUSHINGBOX_ID="vF6098C58E4A4D96"
+##STATUSCAKE_URL="https://push.statuscake.com/?PK=50bc5a406146489&TestID=510385"
+##PUSHMON_URL="http://ping.pushmon.com/pushmon/ping/"
+##PUSHMON_ID="WmpnHI"
+##PUSHINGBOX_URL="http://api.pushingbox.com/pushingbox"
+##PUSHINGBOX_ID="vF6098C58E4A4D96"
 
 GROVESTREAMS_URL = "http://grovestreams.com/api/feed?asPut&api_key=521dfde4-e9e2-36b6-bf96-18242254873f"
 
-DBLOCATION="/media/USBHDD1/TempMonData/rfmonDB.db"
+DBLOCATION="/media/nas-rpi/TempMonData/rfmonDB.db"
 
 DEFAULT_API_KEY = "IjPjyGRBNX4215uvu7sAB86NBjCtklQByFAIb1VoJT2TUeXF"
 DEFAULT_FEED_ID = "1785749146"
@@ -79,16 +78,34 @@ def initRadioReceive():
 
 def initSensors( sensorArrayIn ):
   sensorList = (  
-      ["F1", "Grill", 60, GRILL_API_KEY, GRILL_FEED_ID, "grill",
+      ["C2", "housetemp", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "house",
+        (["1", "house", "House"], ["2", "hvac", "HVAC"], ["3", "volts", "Voltage"]) ] 
+    , ["F1", "Grill", 60, GRILL_API_KEY, GRILL_FEED_ID, "grill",
         (["1", "pittemp", "PitTemp"], ["2", "food1temp", "Food1Temp"], ["3", "food2temp", "Food2Temp"]) ]
     , ["C1", "Nathan", 600, DEFAULT_API_KEY, DEFAULT_FEED_ID, "nathan",
         (["unused", "", ""], ["1", "humidity", "Humidity"], ["2", "C1_temp", "C1_Temp"]) ]
     , ["C3", "Freezer", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "freezer",
-        (["1", "temp", "FreezerTemp"], ["unused", "", ""], ["unused", "", ""]) ]
+        (["1", "garagetemp", "GarageTemp"], ["2", "temp", "FreezerTemp"], ["3", "volts", "Voltage"]) ]
     , ["C5", "Plant",  1800, DEFAULT_API_KEY, DEFAULT_FEED_ID, "plant",
-        (["1", "water", "WaterLevel"], ["2", "volts", "Voltage"], ["unused", "", ""]) ]
+        (["1", "water", "WaterLevel"], ["unused", "", ""], ["3", "volts", "Voltage"] ) ]
     , ["C4", "TestUnit", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "testunit",
-        (["1", "temp", "TestTemp"], ["2", "volts", "Voltage"], ["unused", "", ""]) ]
+        (["1", "temp", "TestTemp"], ["unused", "", ""], ["3", "volts", "Voltage"] ) ]
+    , ["E1", "TempUnit1", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "tempunit1",
+        (["1", "temp", "Temp"], ["unused", "", ""], ["3", "volts", "Voltage"] ) ]
+    , ["E2", "TempUnit2", 60, DEFAULT_API_KEY, DEFAULT_FEED_ID, "testunit2",
+        (["1", "temp", "TestTemp2"], ["2", "temp2", "TestTemp2b"], ["3", "volts", "Voltage"] ) ]
+    , ["E3", "TempUnit3", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "tempunit3",
+        (["1", "temp", "Temp"], ["unused", "", ""], ["3", "volts", "Voltage"] ) ]
+    , ["E4", "TempUnit4", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "tempunit4",
+        (["1", "temp", "Temp"], ["unused", "", ""], ["3", "volts", "Voltage"]) ]
+    , ["E5", "TempUnit5", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "tempunit5",
+        (["1", "temp", "Temp"], ["unused", "", ""], ["3", "volts", "Voltage"]) ]
+    , ["E6", "TempUnit6", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "tempunit6",
+        (["1", "temp", "Temp"], ["unused", "", ""], ["3", "volts", "Voltage"]) ]
+    , ["E7", "TempUnit7", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "tempunit7",
+        (["1", "temp", "Temp"], ["unused", "", ""], ["3", "volts", "Voltage"]) ]
+    , ["A1", "WaterHeater", 120, DEFAULT_API_KEY, DEFAULT_FEED_ID, "waterhtr",
+        (["1", "supply", "Supply"], ["2", "return", "Return"], ["3", "volts", "Voltage"]) ]
     , ["A2", "Aquarium", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "aquarium",
         (["1", "house", "House"], ["2", "aquarium", "Aquarium"], ["unused", "", ""]) ]
                ) 
@@ -98,10 +115,10 @@ def initSensors( sensorArrayIn ):
     sensorArrayIn[x.getTransmitterID()] = x
 
   # Add the unique House Monitor
-  x = rfmon_house.rfmon_house( "C2", "housetemp", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "house",
-        (["1", "house", "House", 0], ["2", "hvac", "HVAC", 1.0], ["3", "furnace", "Furnace", 0]) 
-      )
-  sensorArrayIn[x.getTransmitterID()] = x
+  ##x = rfmon_house.rfmon_house( "C2", "housetemp", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "house",
+  ##      (["1", "house", "House", 0], ["2", "hvac", "HVAC", 1.0], ["3", "furnace", "Furnace", 0]) 
+  ##    )
+  ##sensorArrayIn[x.getTransmitterID()] = x
 
   #print sensorArrayIn
   
@@ -133,7 +150,7 @@ def run():
 
         n = newSensors[nodeID]
         nodeID, seq, tempList = n.parsePayload( recv_buffer )  # Get info from packet
-        print "[", nodeID, "] ", seq, "-", myDateTime.astimezone(tzlocal.get_localzone()).strftime("%Y-%m-%d %H:%M:%S %Z"), ": ", tempList,  # trailing comma says no NEWLINE
+        print "[", nodeID, "-", n.getTransmitterName(), "]", seq, "-", myDateTime.astimezone(tzlocal.get_localzone()).strftime("%Y-%m-%d %H:%M:%S %Z"), ": ", tempList,  # trailing comma says no NEWLINE
 
         parms = n.getSensorParms()  # Get info from Sensor class
 
@@ -152,14 +169,14 @@ def run():
             try:
 		conn = sqlite3.connect(DBLOCATION)
 		curs = conn.cursor()
-		print "Before Execute"
+#		print "Before Execute"
 		curs.execute("INSERT INTO rawdata (nodeid, seqnum, metricid, metricguid, metricname, metric, metricdt) VALUES (?,?,?,?,?,?,?) ", \
 			( nodeID, seq, parms[x][0], _metricguid, _metricname, _metric, myDateTime))
-		print "After Execute"
+#		print "After Execute"
 		conn.commit()  #done by the 'with' statement
-		print "After commit"
+#		print "After commit"
 		curs.close() ;
-		print "After cursor close"
+#		print "After cursor close"
             except( sqlite3.OperationalError ) as e:
                 print "Error Inserting to DB!({0}:".format(e)
             finally:
