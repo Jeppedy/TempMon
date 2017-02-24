@@ -25,6 +25,7 @@ Q_TOPIC="hello"
 DEBUG = True
  
 SLEEP_SECONDS = 60*5+5
+SLEEP_SECONDS = 5
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code [%d]" % rc)

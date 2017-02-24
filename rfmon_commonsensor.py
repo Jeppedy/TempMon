@@ -1,5 +1,14 @@
 import time
 
+def getNodeIDFromMsgString(stringIN):
+    # Need to parse out NodeID to find which payload parser to use...
+    recv_string = ""
+    recv_string = stringIN
+
+    string_parts = recv_string.split(",")
+    nodeID   = string_parts[0]
+    return nodeID
+
 def getNodeIDFromPayload(payloadIN):
     # Need to parse out NodeID to find which payload parser to use...
     recv_string = ""
@@ -81,6 +90,12 @@ class rfmon_BASE( object ):
         recv_string = ""
         for x in recvBufferIn:
             recv_string += chr(x)
+        parseMsgString( recv_string )
+
+    def parseMsgString( self, recvStringIn ):
+        """ Returns three parameters after parsing: Node, Interval, parms """
+        recv_string = ""
+        recv_string = recvStringIn
 
         string_parts = recv_string.split(",")
         numtemps = len(string_parts) - 2
