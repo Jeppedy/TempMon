@@ -75,6 +75,8 @@ def initSensors( sensorArrayIn ):
         (["1", "temp", "Temp"], ["unused", "", ""], ["3", "volts", "Voltage"]) ]
     , ["E7", "TempUnit7", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "tempunit7",
         (["1", "temp", "Temp"], ["unused", "", ""], ["3", "volts", "Voltage"]) ]
+    , ["O1", "RasPi", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "raspi",
+        (["1", "outsidetemp", "OutsideTemp"], ["unused", "", ""], ["unused", "", ""]) ]
     , ["A1", "WaterHeater", 120, DEFAULT_API_KEY, DEFAULT_FEED_ID, "waterhtr",
         (["1", "supply", "Supply"], ["2", "return", "Return"], ["3", "volts", "Voltage"]) ]
     , ["A2", "Aquarium", 300, DEFAULT_API_KEY, DEFAULT_FEED_ID, "aquarium",
@@ -149,6 +151,7 @@ def on_message(client, userdata, msg):
         # GroveStream push for all streams for a node (component)
         try:
             url = GROVESTREAMS_URL+"&seq="+str(seq)+"&compId="+n.getComponentID()+metricsString
+            print url
 	    urlhandle = urllib2.urlopen(url) 
 	    urlhandle.close() 
         except( requests.exceptions.ConnectionError, requests.HTTPError, urllib2.URLError) as e:

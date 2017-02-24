@@ -11,7 +11,8 @@ import json
 import paho.mqtt.client as mqtt
 
 
-COMPONENT = "computerroom"
+UNITID = "O1"
+COMPONENT = "raspi"
 CHANNELOUT = "outsidetemp"
 GROVESTREAMS_URL = "http://grovestreams.com/api/feed?asPut&api_key=521dfde4-e9e2-36b6-bf96-18242254873f"
 
@@ -25,13 +26,13 @@ Q_TOPIC="hello"
 DEBUG = True
  
 SLEEP_SECONDS = 60*5+5
-SLEEP_SECONDS = 5
 
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code [%d]" % rc)
+    pass
 
 def on_publish(client,userdata,mid):
-    print("Data Published, Msg ID: [%d]" % mid)
+    #print("Data Published, Msg ID: [%d]" % mid)
     pass
 
 def utc2local (utc):
@@ -64,18 +65,15 @@ def run():
     except (requests.exceptions.ConnectionError, requests.HTTPError, urllib2.URLError) as e:
       print "Error reading WUnderground info!!({0}): {1}".format(e.errno, e.strerror)
 
-    if DEBUG:
-	print "%s: Current temperature in %s is: %s" % (datetime.now(), location, temp_f)
-
-    try:
-        url = GROVESTREAMS_URL+"&compId="+COMPONENT+"&"+CHANNELOUT+"="+str(temp_f)
-#       urlhandle = urllib2.urlopen(url)
-#       urlhandle.close()
-    except( requests.exceptions.ConnectionError, requests.HTTPError) as e:
-        print "Error updating GroveStreams with RF Data!!({0}): {1}".format(e.errno, e.strerror)
+#    if DEBUG:
+#	print "%s: Current temperature in %s is: %s" % (datetime.now(), location, temp_f)
 
     client.connect(Q_BROKER, Q_PORT, keepalive=60)
-    msgToSend = str(datetime.now())+"  compId="+COMPONENT+"&"+CHANNELOUT+"="+str(temp_f)
+
+    msgToSend = "%s,%03d,%04d,9990,9990" % (UNITID,0,temp_f*10)
+    if DEBUG:
+	print "%s: %s" % (datetime.now(), msgToSend)
+
     client.publish(Q_TOPIC,msgToSend)
     client.disconnect()
 
