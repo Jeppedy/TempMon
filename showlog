@@ -1,1 +1,1 @@
-tail -50f /var/log/rfmon.log
+tail -50f /var/log/tempmon.log
