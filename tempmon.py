@@ -20,7 +20,7 @@ GROVESTREAMS_URL = "http://grovestreams.com/api/feed?asPut&api_key=521dfde4-e9e2
 
 # ---- Globals ----
 IsConnected=False
-IsCnxnErr=False
+cnxnRC=-1
 
 SLEEP_SECONDS = 60*5+5
 
@@ -41,12 +41,11 @@ def getConfigExtBool( configSysIn, sectionIn, optionIn, defaultIn=False ):
 
 
 def on_connect(client, userdata, flags, rc):
-    global IsConnected,IsCnxnErr
+    global IsConnected, cnxnRC
     print("CB: Connected;rtn code [%d]"% (rc) )
+    cnxnRC=rc
     if( rc == 0 ):
         IsConnected=True
-    else:
-        IsCnxnErr=True
 
 def on_disconnect(client, userdata, rc):
     global IsConnected
@@ -83,12 +82,12 @@ def run( client ):
   client.loop_start()
 
   retry=0
-  while( (not IsConnected) and (not IsCnxnErr) and retry <= 10):
+  while( (not IsConnected) and cnxnRC==-1 and retry <= 10):
       print("Waiting for Connect")
       time.sleep(.05)
       retry += 1
-  if( not IsConnected or IsCnxnErr ):
-      print("No connection could be established")
+  if( not IsConnected ):
+      print("No connection could be established: rc[%d]") % cnxnRC
       return
 
 
@@ -114,9 +113,11 @@ def run( client ):
 	print "%s: %s" % (datetime.now(), msgToSend)
 
     if( not IsConnected ):
-        print( "ERROR: RF Msg received; NO CONNECTION to queue" )
+        print( "ERROR: NO CONNECTION to queue" )
     else:
-        client.publish(config.get("DEFAULT", 'topic'), msgToSend)
+        info = client.publish(config.get("DEFAULT", 'topic'), msgToSend, qos=1)
+        info.wait_for_publish()
+
 
     sys.stdout.flush()
     time.sleep(SLEEP_SECONDS)
